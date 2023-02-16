@@ -1,5 +1,5 @@
 ---
-title: "오직 카즈 오도 사장님을 위한 원가절감 컨설팅"
+title: "오직 카츠 오도 사장님을 위한 원가절감 컨설팅"
 author : "by 푸짐"
 output: 
   flexdashboard::flex_dashboard:
