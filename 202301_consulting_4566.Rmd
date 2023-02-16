@@ -1,6 +1,6 @@
 ---
 title: "오직 유니푸드 사장님을 위한 원가절감 컨설팅"
-author : "푸짐"
+author : "by 푸짐"
 output: 
   flexdashboard::flex_dashboard:
     orientation: columns
