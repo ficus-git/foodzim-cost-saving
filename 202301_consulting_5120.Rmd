@@ -78,9 +78,9 @@ Column {data-width=650}
 result_4566 %>%
   knitr::kable(format.args = list(big.mark = ","))
 
-shiny::actionButton(inputId='ab1', label="지금 바로 장보러가기", 
+shiny::actionButton(inputId='ab1', label="멤버십 혜택 바로보기", 
                     icon = icon("th"), 
-                    onclick ="window.open('https://foodzim.co.kr/?utm_source=newsletter&utm_medium=sms&utm_campaign=cost_saving_20230299')")
+                    onclick ="window.open('https://foodzim.co.kr/event/membership/?utm_source=newsletter&utm_medium=sms&utm_campaign=cost_saving_20230299')")
 
 ```
 

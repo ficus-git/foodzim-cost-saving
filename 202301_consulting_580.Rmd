@@ -66,7 +66,7 @@ GROUP BY t1.name
 HAVING sum((price - membership_price) * final_release_qty) > 0
 ORDER BY sum((price - membership_price) * final_release_qty) DESC
 "
-result_4566 <- sqldf(query, drv = "MySQL", connection = con)
+result <- sqldf(query, drv = "MySQL", connection = con)
 ```
 
 Column {data-width=650}
@@ -75,16 +75,16 @@ Column {data-width=650}
 ### 2023년 1월 구매 이력을 기반으로 추천 드려요!
 
 ```{r}
-result_4566 %>%
+result %>%
   knitr::kable(format.args = list(big.mark = ","))
 
-shiny::actionButton(inputId='ab1', label="지금 바로 장보러가기", 
+shiny::actionButton(inputId='ab1', label="멤버십 혜택 바로보기", 
                     icon = icon("th"), 
-                    onclick ="window.open('https://foodzim.co.kr/?utm_source=newsletter&utm_medium=sms&utm_campaign=cost_saving_20230299')")
+                    onclick ="window.open('https://foodzim.co.kr/event/membership/?utm_source=newsletter&utm_medium=sms&utm_campaign=cost_saving_20230299')")
 
 ```
 
-안내된 멤버십 전용가는 2/16일을 기준으로 작성되었습니다.  
+안내된 멤버십 전용가는 2/17일을 기준으로 작성되었습니다.  
 상품 가격은 상황에 따라 별도 안내 없이 변경될 수 있습니다.
 
 [고객문의] 1899-1253
