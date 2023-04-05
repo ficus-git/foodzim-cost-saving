@@ -1,0 +1,91 @@
+---
+title: "오직 불맞고쭈꾸미&삼겹살 문정점 사장님을 위한 원가절감 컨설팅"
+author : "by 푸짐"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    theme: united
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(sqldf)
+library(odbc)
+library(RMySQL)
+library(dplyr)
+library(shiny)
+library(shinydashboard)
+
+# options(encoding = "UTF-8")
+# Sys.setlocale(category = "LC_ALL", locale = "Korean")
+
+con <- dbConnect(
+                 MySQL(),
+                 dbname = "foodzim",
+                 host = "foodzim.cluster-ro-cru36jme4ufz.ap-northeast-2.rds.amazonaws.com",
+                 port = 3306,
+                 user = "foodzim",
+                 password = "vnwla12#$")
+
+dbSendQuery(con, "SET NAMES utf8")
+query <- "
+SELECT t1.name as '상품명',
+       round(sum(amount_total)/sum(final_release_qty)) as '구매하신 평균가',
+       round(min(membership_price)) as '멤버십 전용가',
+       sum(final_release_qty) as '지난달 구매량',
+       round(sum((price - membership_price) * final_release_qty)) as '멤버십 가입 시 예상 절감액'
+FROM (
+		SELECT user_id,
+		       material_id,
+		       product_id,
+		       name,
+		       (price / unit_n) as price,
+		       (
+					SELECT min(price / unit_n)
+					FROM products as p_membership
+					WHERE display = 1 AND
+					      name LIKE '%멤버십%' AND
+					      op.material_id = p_membership.material_id
+		       ) as membership_price,
+		       final_release_qty,
+		       amount_total
+		FROM order_products as op
+		WHERE material_id IN (
+				SELECT material_id
+				FROM products
+				WHERE display = 1 AND
+				      name LIKE '%멤버십%'
+		    ) AND
+		    user_id = 5517 AND
+		    EXTRACT(YEAR_MONTH from created_at) = 202303 AND
+		    status = 1 AND
+		    name NOT LIKE '%멤버십%'
+) as t1
+GROUP BY t1.name
+HAVING sum((price - membership_price) * final_release_qty) > 0
+ORDER BY sum((price - membership_price) * final_release_qty) DESC
+"
+result <- sqldf(query, drv = "MySQL", connection = con)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### 2023년 3월 구매 이력을 기반으로 추천 드려요!
+
+```{r}
+result %>%
+  knitr::kable(format.args = list(big.mark = ","))
+
+shiny::actionButton(inputId='ab1', label="멤버십 혜택 바로보기", 
+                    icon = icon("th"), 
+                    onclick ="window.open('https://foodzim.co.kr/event/membership/?utm_source=newsletter&utm_medium=sms&utm_campaign=cost_saving_20230299')")
+
+```
+
+안내된 멤버십 전용가는 4/5일을 기준으로 작성되었습니다.  
+상품 가격은 상황에 따라 별도 안내 없이 변경될 수 있습니다.
+
+[고객문의] 1899-1253
+
